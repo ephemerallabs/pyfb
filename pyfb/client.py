@@ -28,12 +28,12 @@ class FacebookClient(object):
      #A factory to make objects from a json
     factory = Json2ObjectsFactory()
 
-    def __init__(self, app_id, access_token=None, raw_data=None):
+    def __init__(self, app_id, access_token=None, raw_data=None, permissions=DEFAULT_SCOPE):
 
         self.app_id = app_id
         self.access_token = access_token
         self.raw_data = raw_data
-        self.permissions = self.DEFAULT_SCOPE
+        self.permissions = permissions 
         self.expires = None
 
     def _make_request(self, url, data=None):
@@ -85,28 +85,30 @@ class FacebookClient(object):
         url = "%s%s" % (self.BASE_AUTH_URL, url_path)
         return url
 
-    def _get_permissions(self):
-
-        return ",".join(self.permissions)
-
-    def get_auth_token_url(self, redirect_uri):
+    def get_auth_token_url(self, redirect_uri, permissions=None):
         """
             Returns the authentication token url
         """
+        if not permissions:
+            permissions = self.permissions
+
         params = {
             "client_id": self.app_id,
             "type": "user_agent",
-            "scope": self._get_permissions(),
+            "scope": ",".join(permissions),
         }
         return self._get_auth_url(params, redirect_uri)
 
-    def get_auth_code_url(self, redirect_uri, state=None):
+    def get_auth_code_url(self, redirect_uri, state=None, permissions=None):
         """
             Returns the url to get a authentication code
         """
+        if not permissions:
+            permissions = self.permissions
+
         params = {
             "client_id": self.app_id,
-            "scope": self._get_permissions(),
+            "scope": ",".join(permissions),
         }
 
         if state:
