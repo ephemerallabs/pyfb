@@ -13,9 +13,11 @@ class Pyfb(object):
         This class is Facade for FacebookClient
     """
 
-    def __init__(self, app_id, access_token=None, raw_data=False):
-
-        self._client = FacebookClient(app_id, access_token, raw_data)
+    def __init__(self, app_id, access_token=None, raw_data=False, permissions=None):
+        kwargs = dict()
+        if permissions:
+            kwargs = {'permissions' : permissions}
+        self._client = FacebookClient(app_id, access_token, raw_data, **kwargs)
 
     def authenticate(self):
         """
@@ -29,17 +31,17 @@ class Pyfb(object):
         """
         self._show_in_browser(self.get_auth_code_url())
 
-    def get_auth_url(self, redirect_uri=None):
+    def get_auth_url(self, redirect_uri=None, permissions=None):
         """
             Returns the authentication url
         """
-        return self._client.get_auth_token_url(redirect_uri)
+        return self._client.get_auth_token_url(redirect_uri, permissions=permissions)
 
-    def get_auth_code_url(self, redirect_uri=None):
+    def get_auth_code_url(self, redirect_uri=None, state=None, permissions=None):
         """
             Returns the url to get a authentication code
         """
-        return self._client.get_auth_code_url(redirect_uri)
+        return self._client.get_auth_code_url(redirect_uri, state=state, permissions=permissions)
 
     def get_access_token(self, app_secret_key, secret_code, redirect_uri=None):
         """
@@ -142,6 +144,12 @@ class Pyfb(object):
             Get a list of liked objects
         """
         return self._client.get_list(id, "likes")
+
+    def get_pages(self, id=None):
+        """
+            Get a list of liked objects
+        """
+        return self._client.get_list(id, 'accounts', 'FBPage')
 
     def like(self, id):
         """

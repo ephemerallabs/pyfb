@@ -1,8 +1,5 @@
 import unittest
-try:
-	import simplejson as json
-except ImportError:
-	import json
+import json
 
 from pyfb import Pyfb
 

@@ -14,6 +14,5 @@ setup(
     url='http://code.google.com/p/pyfb/',
     packages=['pyfb'],
     install_requires=[
-        'simplejson',
     ],
 )

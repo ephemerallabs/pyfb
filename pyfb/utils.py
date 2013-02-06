@@ -4,13 +4,8 @@
     This file provides utilities to the pyfb library
 """
 
-try:
-    import json as simplejson
-except ImportError:
-    import simplejson
-
+import json
 import urllib2
-
 
 class FacebookObject(object):
     """
@@ -61,7 +56,7 @@ class Json2ObjectsFactory(object):
     """
 
     def loads(self, data):
-        return simplejson.loads(data)
+        return json.loads(data)
 
     def make_object(self, name, data):
         raw = self.loads(data)
