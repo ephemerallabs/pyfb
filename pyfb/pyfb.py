@@ -28,17 +28,17 @@ class Pyfb(object):
         """
         self._show_in_browser(self.get_auth_code_url())
 
-    def get_auth_url(self, redirect_uri=None, permissions=None):
+    def get_auth_url(self, redirect_uri=None):
         """
             Returns the authentication url
         """
-        return self._client.get_auth_token_url(redirect_uri, permissions=permissions)
+        return self._client.get_auth_token_url(redirect_uri)
 
-    def get_auth_code_url(self, redirect_uri=None, state=None, permissions=None):
+    def get_auth_code_url(self, redirect_uri=None, state=None):
         """
             Returns the url to get a authentication code
         """
-        return self._client.get_auth_code_url(redirect_uri, state=state, permissions=permissions)
+        return self._client.get_auth_code_url(redirect_uri, state=state)
 
     def get_access_token(self, app_secret_key, secret_code, redirect_uri=None):
         """

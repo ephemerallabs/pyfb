@@ -90,30 +90,30 @@ class FacebookClient(object):
         url = "%s%s" % (self.BASE_AUTH_URL, url_path)
         return url
 
-    def get_auth_token_url(self, redirect_uri, permissions=None):
+    def _get_permissions(self):
+
+        return ",".join(self.permissions)
+
+    def get_auth_token_url(self, redirect_uri):
         """
             Returns the authentication token url
         """
-        if not permissions:
-            permissions = self.permissions
 
         params = {
             "client_id": self.app_id,
             "type": "user_agent",
-            "scope": ",".join(permissions),
+            "scope": self._get_permissions(),
         }
         return self._get_auth_url(params, redirect_uri)
 
-    def get_auth_code_url(self, redirect_uri, state=None, permissions=None):
+    def get_auth_code_url(self, redirect_uri, state=None):
         """
             Returns the url to get a authentication code
         """
-        if not permissions:
-            permissions = self.permissions
 
         params = {
             "client_id": self.app_id,
-            "scope": ",".join(permissions),
+            "scope": self._get_permissions(),
         }
 
         if state:
