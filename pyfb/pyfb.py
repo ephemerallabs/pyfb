@@ -14,10 +14,7 @@ class Pyfb(object):
     """
 
     def __init__(self, app_id, access_token=None, raw_data=False, permissions=None):
-        kwargs = dict()
-        if permissions:
-            kwargs = {'permissions' : permissions}
-        self._client = FacebookClient(app_id, access_token, raw_data, **kwargs)
+        self._client = FacebookClient(app_id, access_token=access_token, raw_data=raw_data, permissions=permissions)
 
     def authenticate(self):
         """
