@@ -16,24 +16,29 @@ class FacebookClient(object):
     GRAPH_URL = "https://graph.facebook.com/"
     API_URL = "https://api.facebook.com/"
 
-    BASE_AUTH_URL = "%sdialog/oauth?" % FACEBOOK_URL 
+    BASE_AUTH_URL = "%sdialog/oauth?" % FACEBOOK_URL
     DIALOG_BASE_URL = "%sdialog/feed?" % FACEBOOK_URL
-    FBQL_BASE_URL = "%smethod/fql.query?" % API_URL
+    FBQL_BASE_URL = "%sfql?" % GRAPH_URL
     BASE_TOKEN_URL = "%soauth/access_token?" % GRAPH_URL
 
     DEFAULT_REDIRECT_URI = "http://www.facebook.com/connect/login_success.html"
-    DEFAULT_SCOPE = auth.ALL_PERMISSIONS
+    DEFAULT_SCOPE = [auth.USER_ABOUT_ME]
     DEFAULT_DIALOG_URI = "http://www.example.com/response/"
 
      #A factory to make objects from a json
     factory = Json2ObjectsFactory()
 
-    def __init__(self, app_id, access_token=None, raw_data=None):
+    def __init__(self, app_id, access_token=None, raw_data=False, permissions=None):
 
         self.app_id = app_id
         self.access_token = access_token
         self.raw_data = raw_data
-        self.permissions = self.DEFAULT_SCOPE
+
+        if permissions is None:
+            self.permissions = self.DEFAULT_SCOPE
+        else:
+            self.permissions = permissions
+
         self.expires = None
 
     def _make_request(self, url, data=None):
@@ -93,6 +98,7 @@ class FacebookClient(object):
         """
             Returns the authentication token url
         """
+
         params = {
             "client_id": self.app_id,
             "type": "user_agent",
@@ -104,6 +110,7 @@ class FacebookClient(object):
         """
             Returns the url to get a authentication code
         """
+
         params = {
             "client_id": self.app_id,
             "scope": self._get_permissions(),
@@ -196,11 +203,11 @@ class FacebookClient(object):
         if object_name is None:
             object_name = path
         path = "%s/%s" % (id, path.lower())
-        
+
         obj = self.get_one(path, object_name)
         obj_list = self.factory.make_paginated_list(obj, object_name)
 
-        if not obj_list:
+        if obj_list == False:
             obj_list = obj.get("data")
 
         return obj_list
@@ -233,19 +240,19 @@ class FacebookClient(object):
             table = query[index:].strip().split(" ")[0]
             return table
         except Exception, e:
-            raise PyfbException("Invalid FQL Sintax")
+            raise PyfbException("Invalid FQL Syntax")
 
     def execute_fql_query(self, query):
         """
             Executes a FBQL query and return a list of objects
         """
         table = self._get_table_name(query)
-        url_path = self._get_url_path({'query' : query, 'access_token' : self.access_token, 'format' : 'json'})
+        url_path = self._get_url_path({'q' : query, 'access_token' : self.access_token, 'format' : 'json'})
         url = "%s%s" % (self.FBQL_BASE_URL, url_path)
         data = self._make_request(url)
 
         objs = self.factory.make_objects_list(table, data)
-        
+
         if hasattr(objs, 'error'):
             raise PyfbException(objs.error.message)
 

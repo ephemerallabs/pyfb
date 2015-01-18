@@ -13,9 +13,8 @@ class Pyfb(object):
         This class is Facade for FacebookClient
     """
 
-    def __init__(self, app_id, access_token=None, raw_data=False):
-
-        self._client = FacebookClient(app_id, access_token, raw_data)
+    def __init__(self, app_id, access_token=None, raw_data=False, permissions=None):
+        self._client = FacebookClient(app_id, access_token=access_token, raw_data=raw_data, permissions=permissions)
 
     def authenticate(self):
         """
@@ -145,7 +144,7 @@ class Pyfb(object):
 
     def get_pages(self, id=None):
         """
-            Get a list of liked objects
+            Get a list of Facebook Pages user has access to
         """
         return self._client.get_list(id, 'accounts', 'FBPage')
 
