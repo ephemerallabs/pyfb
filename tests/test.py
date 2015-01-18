@@ -6,9 +6,9 @@ from pyfb import Pyfb
 try:
     from test_data import config
 except:
-	print "\nERROR! You must have a test_data.py file providing the facebook app id and the access token."
-	print "\nExample:"
-	print '\tconfig = {\n\t\t"FACEBOOK_APP_ID": "your_app_id"\n\t\t"FACEBOOK_TOKEN": "your_token"\n\t}\n'
+	print("\nERROR! You must have a test_data.py file providing the facebook app id and the access token.")
+	print("\nExample:")
+	print('\tconfig = {\n\t\t"FACEBOOK_APP_ID": "your_app_id"\n\t\t"FACEBOOK_TOKEN": "your_token"\n\t}\n')
 	exit(1)
 
 
@@ -22,15 +22,15 @@ class PyfbTests(unittest.TestCase):
         self.me = self.pyfb.get_myself()
 
     def test_auth(self):
-        self.assertEquals(type(self.me.name), type(unicode()))
+        self.assertEquals(type(self.me.name), type(str()))
 
     def test_get_friends(self):
         self.assertTrue(isinstance(self.pyfb.get_friends(self.me.id), list))
 
     def test_get_photos_paging(self):    	
         photos = self.pyfb.get_photos()
-        more_photos = photos.next()
-        more_more_photos = more_photos.next()
+        more_photos = next(photos)
+        more_more_photos = next(more_photos)
 
         if len(photos) < 25 and len(more_photos) > 0:
         	raise Exception()
@@ -51,7 +51,7 @@ class PyfbTestRawDataTests(PyfbTests):
     pyfb_args = {"raw_data": True }
 
     def test_auth(self):
-        self.assertEquals(type(self.me["name"]), type(unicode()))
+        self.assertEquals(type(self.me["name"]), type(str()))
 
     def test_get_friends(self):
         friends = self.pyfb.get_friends(self.me["id"])
